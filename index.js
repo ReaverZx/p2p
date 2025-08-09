@@ -1,7 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 
 const PORT = process.env.PORT || 3000;
-// We use path "/p2p" (you can change it in client/server)
 const PATH = "/p2p";
 
 const wss = new WebSocketServer({
@@ -13,7 +12,7 @@ console.log(`P2P Broker server running on port ${PORT} with path ${PATH}`);
 
 const rooms = new Map();
 
-wss.on("connection", (ws, req) => {
+wss.on("connection", (ws) => {
   console.log("New client connected");
 
   ws.on("message", (message) => {
@@ -37,7 +36,6 @@ wss.on("connection", (ws, req) => {
     const clients = rooms.get(key);
     clients.add(ws);
 
-    // Broadcast data to everyone in the same room except sender
     clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify({ key, data }));
